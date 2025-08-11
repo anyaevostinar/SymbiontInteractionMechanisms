@@ -21,3 +21,7 @@ Anya Vostinar
 
 SymbiontInteractionMechanisms is released under MIT license. See [LICENSE](https://github.com/anyaevostinar/SymbiontInteractionMechanisms/blob/master/LICENSE) for details.
 
+## History
+Initial experiments were conducted in the following repositories:
+* [ComplexSymbiontInteractions](https://github.com/anyaevostinar/ComplexSymbiontInteractions) - Health and Nutrient
+* [StressSymbions](https://github.com/anyaevostinar/StressSymbionts) - Stress
