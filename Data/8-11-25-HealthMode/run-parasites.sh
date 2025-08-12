@@ -32,8 +32,9 @@ cd Parasites
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode/symbulation_sgp .
 cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode/SymSettings.cfg .
+cp /Accounts/vostinar/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
+
 
 args=" -START_MOI 1 -FILE_NAME _Parasites -SYMBIONT_TYPE 1 -CPU_TRANSFER_CHANCE 0.8 -VERTICAL_TRANSMISSION 0.0 "
 ./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log

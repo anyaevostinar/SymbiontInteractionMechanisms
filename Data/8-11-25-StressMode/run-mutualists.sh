@@ -31,7 +31,6 @@ cd Mutualists
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-StressMode/symbulation_sgp .
 cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-StressMode/SymSettings.cfg .
 cp /Accounts/vostinar/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
 
