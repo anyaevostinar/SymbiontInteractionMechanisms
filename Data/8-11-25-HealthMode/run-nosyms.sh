@@ -16,10 +16,12 @@
 ## SBATCH --time=0-12
 
 ## Memory requirement in megabytes. You might need to make this bigger.
-## SBATCH --mem-per-cpu=500M
+#SBATCH --mem-per-cpu=500M
 
 ## Launch an array of jobs.
 #SBATCH --array=100-130
+
+#SBATCH --nodes=1
 
 
 cd /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode
