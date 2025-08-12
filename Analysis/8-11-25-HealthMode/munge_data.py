@@ -16,7 +16,7 @@ outFile.write(header)
 
 for t in folders:
     for r in reps:
-        fname = metafolder +"/"+t+str(r)+"/" + "Tasks_" + t +"_SEED" + str(r)+ ".data"
+        fname = metafolder +t+str(r)+"/" + "Tasks_" + t +"_SEED" + str(r)+ ".data"
         uid = t + "_" + str(r)      
 
         curFile = open(fname, 'r')
