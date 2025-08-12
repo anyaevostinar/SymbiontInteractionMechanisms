@@ -7,8 +7,8 @@ import subprocess
 import sys
 
 treatments = [" -START_MOI 0 -FILE_NAME _NoSyms ", #no symbionts
-              " -START_MOI 1 -FILE_NAME _Parasites -SYMBIONT_TYPE 1 -CPU_TRANSFER_CHANCE 0.8 ",
-              " -START_MOI 1 -FILE_NAME _Mutualists -SYMBIONT_TYPE 0 -CPU_TRANSFER_CHANCE 0.65 "]
+              " -START_MOI 1 -FILE_NAME _Parasites -SYMBIONT_TYPE 1 -CPU_TRANSFER_CHANCE 0.8 -VERTICAL_TRANSMISSION 0.0",
+              " -START_MOI 1 -FILE_NAME _Mutualists -SYMBIONT_TYPE 0 -CPU_TRANSFER_CHANCE 0.65 -VERTICAL_TRANSMISSION 1.0"]
 
 filenames = ["_NoSyms", "_Parasites", "_Mutualists"]
 
@@ -52,4 +52,4 @@ for a in seeds:
         settings_filename = "Output_"+filenames[i]+".data"
 
         print(command_str)
-        cmd(command_str+" > "+settings_filename)
+        #cmd(command_str+" > "+settings_filename)
