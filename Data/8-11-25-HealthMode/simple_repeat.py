@@ -52,4 +52,4 @@ for a in seeds:
         settings_filename = "Output_"+filenames[i]+".data"
 
         print(command_str)
-        #cmd(command_str+" > "+settings_filename)
+        cmd(command_str+" > "+settings_filename)
