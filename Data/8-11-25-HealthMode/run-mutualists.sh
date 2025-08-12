@@ -35,4 +35,4 @@ cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode/symb
 cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode/SymSettings.cfg .
 
 args=" -START_MOI 1 -FILE_NAME _Mutualists -SYMBIONT_TYPE 0 -CPU_TRANSFER_CHANCE 0.65 -VERTICAL_TRANSMISSION 1.0 "
-./symbulation_default $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
+./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
