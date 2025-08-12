@@ -1,5 +1,4 @@
 #!/bin/bash --login
-#SBATCH -A ecode
 
 ## This file runs one experimental condition (i.e. a group of jobs
 ## that are the same except for their random seed)
@@ -37,4 +36,4 @@ cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode/SymS
 args=" -START_MOI 0 -FILE_NAME _NoSyms "
 ./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
 
-## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-mutualists.sh
+## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-nosyms.sh
