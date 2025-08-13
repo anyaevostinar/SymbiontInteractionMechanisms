@@ -8,8 +8,8 @@
 #SBATCH --mail-user=vostinar@carleton.edu
 
 ## Job name settings
-#SBATCH --job-name=health-mut
-#SBATCH -o health-mut%A_%a.out
+#SBATCH --job-name=hm-dif
+#SBATCH -o hm-dif%A_%a.out
 
 ## Time requirement in hours and minutes. You might need to make this
 ## longer, but try to keep it under 4 hours if possible
@@ -24,7 +24,7 @@
 #SBATCH --nodes=1
 
 
-cd /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode
+cd /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-13-25-HealthDiffTaskValues
 
 mkdir Mutualists
 cd Mutualists
@@ -32,7 +32,7 @@ cd Mutualists
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode/SymSettings.cfg .
+cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-13-25-HealthDiffTaskValues/SymSettings.cfg .
 cp /Accounts/vostinar/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
 
 
