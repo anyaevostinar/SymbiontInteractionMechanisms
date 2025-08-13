@@ -21,7 +21,7 @@ for t in folders:
 
         curFile = open(fname, 'r')
         for line in curFile:
-            if (line[0] != "u" and line[0] == "50000"):
+            if (line[0] != "u"):
                 splitline = line.strip().split(',')
                 for task_i in range(1, len(splitline), 2):
                     task = tasks[(task_i-1)//2]
