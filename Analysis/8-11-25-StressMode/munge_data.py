@@ -32,27 +32,3 @@ for t in folders:
         curFile.close()
 outFile.close()
 
-
-outputFileName2 = "munged_basic2.dat"
-outFile2 = open(outputFileName2, 'w')
-outFile2.write(header)
-
-for t in treatment_postfixes:
-    for r in reps2:
-        fname = folder +"Tasks_" + t +"_SEED" + str(r)+ ".data"
-        uid = t + "_" + str(r)
-        if(os.path.isfile(fname) == False):
-            continue        
-       
-        curFile = open(fname, 'r')
-        for line in curFile:
-            if (line[0] != "u"):
-                splitline = line.strip().split(',')
-                for task_i in range(1, len(splitline), 2):
-                    task = tasks[(task_i-1)//2]
-                    host_outstring = "{} {} {} {} {} {} {}\n".format(uid, t, r, splitline[0], task, splitline[task_i], "Host")
-                    outFile2.write(host_outstring)
-                    sym_outstring = "{} {} {} {} {} {} {}\n".format(uid, t, r, splitline[0], task, splitline[task_i+1], "Mutualist")
-                    outFile2.write(sym_outstring)
-        curFile.close()
-outFile2.close()

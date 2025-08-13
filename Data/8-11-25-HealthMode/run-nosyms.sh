@@ -32,8 +32,9 @@ cd NoSyms
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode/symbulation_sgp .
 cp /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-11-25-HealthMode/SymSettings.cfg .
+cp /Accounts/vostinar/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
+
 
 args=" -START_MOI 0 -FILE_NAME _NoSyms "
 ./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
