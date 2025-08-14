@@ -102,8 +102,6 @@ tasks_done_all_time <- data %>%
     n = n(),
     tasks_completed_ever = sum(task_completed_ever == TRUE)
   )
-
-
 ```
 
 ## Final task raw counts
@@ -176,6 +174,101 @@ final_task_counts_sym_plt <- ggplot(
 ggsave(
   file = paste(plot_dir, "final_task_counts_sym.pdf", sep = "/"),
   plot = final_task_counts_sym_plt
+)
+```
+
+## Final tasks completed by task
+
+```{r}
+tasks_completed <- final_data %>%
+  group_by(partner, treatment, task) %>%
+  summarize(
+    total_reps = n(),
+    tasks_completed = sum(task_completed == TRUE)
+  )
+```
+
+### Hosts
+
+```{r}
+reps_with_task_hosts_plt <- ggplot(
+  data = filter(tasks_completed, partner == "Host"),
+  aes(x = treatment, y = tasks_completed, color = treatment, fill = treatment)
+) +
+  geom_col(
+    alpha = 0.5
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_fill_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  scale_y_continuous(
+    limits = c(0, 31)
+  ) +
+  facet_wrap(~task) +
+  labs(
+    title = "Hosts",
+    y = "Replicates with task - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "reps_with_task_hosts_plt.pdf", sep = "/"),
+  plot = reps_with_task_hosts_plt
+)
+```
+
+### Symbionts
+
+```{r}
+reps_with_task_sym_plt <- ggplot(
+  data = filter(tasks_completed, partner == "Symbiont"),
+  aes(x = treatment, y = tasks_completed, color = treatment, fill = treatment)
+) +
+  geom_col(
+    alpha = 0.5
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_fill_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  scale_y_continuous(
+    limits = c(0, 31)
+  ) +
+  facet_wrap(~task) +
+  labs(
+    title = "Symbionts",
+    y = "Replicates with task - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "reps_with_task_sym_plt.pdf", sep = "/"),
+  plot = reps_with_task_sym_plt
 )
 ```
 
@@ -346,5 +439,108 @@ num_diff_tasks_done_ever_sym_plt <- ggplot(
 ggsave(
   file = paste(plot_dir, "num_diff_tasks_done_ever_sym_plt.pdf", sep = "/"),
   plot = num_diff_tasks_done_ever_sym_plt
+)
+```
+
+## Tasks completed (over entire run)
+
+```{r}
+
+reps_with_task_all_time <- data %>%
+  ungroup() %>%
+  group_by(uid, partner, treatment, rep, task) %>%
+  summarize(
+    n = n(),
+    task_completed_ever = any(task_completed)
+  ) %>%
+  ungroup() %>%
+  group_by(partner, treatment, task) %>%
+  summarize(
+    n = n(),
+    tasks_completed_ever = sum(task_completed_ever == TRUE)
+  )
+```
+
+### Hosts
+
+```{r}
+reps_with_task_all_time_hosts_plt <- ggplot(
+  data = filter(reps_with_task_all_time, partner == "Host"),
+  aes(x = treatment, y = tasks_completed_ever, color = treatment, fill = treatment)
+) +
+  geom_col(
+    alpha = 0.5
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_fill_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  scale_y_continuous(
+    limits = c(0, 31)
+  ) +
+  facet_wrap(~task) +
+  labs(
+    title = "Hosts",
+    y = "Replicates with task - All time",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "reps_with_task_all_time_hosts_plt.pdf", sep = "/"),
+  plot = reps_with_task_all_time_hosts_plt
+)
+```
+
+### Symbionts
+
+```{r}
+reps_with_task_sym_plt <- ggplot(
+  data = filter(tasks_completed, partner == "Symbiont"),
+  aes(x = treatment, y = tasks_completed, color = treatment, fill = treatment)
+) +
+  geom_col(
+    alpha = 0.5
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_fill_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  scale_y_continuous(
+    limits = c(0, 31)
+  ) +
+  facet_wrap(~task) +
+  labs(
+    title = "Symbionts",
+    y = "Replicates with task - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "reps_with_task_sym_plt.pdf", sep = "/"),
+  plot = reps_with_task_sym_plt
 )
 ```
