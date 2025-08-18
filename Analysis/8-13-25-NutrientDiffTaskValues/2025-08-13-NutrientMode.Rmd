@@ -1,0 +1,555 @@
+# Health mode analyses
+
+## Dependencies and setup
+
+```{r}
+library(tidyverse)
+library(cowplot)
+library(RColorBrewer)
+library(khroma)
+library(rstatix)
+library(knitr)
+library(kableExtra)
+library(viridis)
+library(Hmisc)
+```
+
+```{r}
+# Build relative path from R's working directory to what is actually the working
+# directory for this experiment.
+experiment_slug <- "8-13-25-NutrientDiffTaskValues"
+working_directory <- paste(
+  "Analysis",
+  experiment_slug,
+  sep = "/"
+)
+```
+
+```{r}
+# Use the cowplot theme as our default for ggplots
+theme_set(theme_cowplot())
+# Create directory to save plots
+plot_dir <- paste(
+  "plots",
+  sep = "/"
+)
+dir.create(
+  plot_dir,
+  showWarnings = FALSE
+)
+```
+
+### Load and preprocess data
+
+```{r}
+data_path <- paste(
+  "data",
+  "munged_basic.dat",
+  sep = "/"
+)
+data <- read_table(data_path)
+
+task_completion_thresh <- 10
+
+data <- data %>%
+  mutate(
+    treatment = as.factor(treatment),
+    uid = as.factor(uid),
+    task = factor(
+      task,
+      levels = c("NOT", "NAND", "AND", "ORN", "OR", "ANDN", "NOR", "XOR", "EQU")
+    ),
+    partner = as.factor(partner),
+    task_completed = count > task_completion_thresh
+  )
+```
+
+Separate out the final update data for convenience.
+
+```{r}
+final_update <- max(data$update)
+final_data <- data %>% filter(update == final_update)
+```
+
+Summarize number of tasks marked as completed
+
+```{r}
+tasks_done_final <- final_data %>%
+  group_by(uid, partner, treatment, rep) %>%
+  summarize(
+    total_tasks = n(),
+    tasks_completed = sum(task_completed == TRUE)
+  )
+
+tasks_done_time <- data %>%
+  group_by(uid, partner, treatment, rep, update) %>%
+  summarize(
+    total_tasks = n(),
+    tasks_completed = sum(task_completed == TRUE)
+  )
+
+tasks_done_all_time <- data %>%
+  ungroup() %>%
+  group_by(uid, partner, treatment, rep, task) %>%
+  summarize(
+    n = n(),
+    task_completed_ever = any(task_completed)
+  ) %>%
+  ungroup() %>%
+  group_by(uid, partner, treatment, rep) %>%
+  summarize(
+    n = n(),
+    tasks_completed_ever = sum(task_completed_ever == TRUE)
+  )
+```
+
+## Final task raw counts
+
+### Hosts
+```{r}
+final_task_counts_hosts_plt <- ggplot(
+  data = filter(final_data, partner == "Host"),
+  aes(x = treatment, y = count, color = treatment)
+) +
+  geom_boxplot(
+    alpha = 0.5,
+    outlier.size = 1
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  facet_wrap(~task, scales = "free") +
+  labs(
+    title = "Hosts",
+    y = "Task Count - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "final_task_counts_hosts.pdf", sep = "/"),
+  plot = final_task_counts_hosts_plt
+)
+```
+
+### Symbionts
+
+```{r}
+final_task_counts_sym_plt <- ggplot(
+  data = filter(final_data, partner == "Symbiont"),
+  aes(x = treatment, y = count, color = treatment)
+) +
+  geom_boxplot(
+    alpha = 0.5,
+    outlier.size = 1
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  facet_wrap(~task, scales = "free") +
+  labs(
+    title = "Symbionts",
+    y = "Task Count - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "final_task_counts_sym.pdf", sep = "/"),
+  plot = final_task_counts_sym_plt
+)
+```
+
+## Final tasks completed by task
+
+```{r}
+tasks_completed <- final_data %>%
+  group_by(partner, treatment, task) %>%
+  summarize(
+    total_reps = n(),
+    tasks_completed = sum(task_completed == TRUE)
+  )
+```
+
+### Hosts
+
+```{r}
+reps_with_task_hosts_plt <- ggplot(
+  data = filter(tasks_completed, partner == "Host"),
+  aes(x = treatment, y = tasks_completed, color = treatment, fill = treatment)
+) +
+  geom_col(
+    alpha = 0.5
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_fill_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  scale_y_continuous(
+    limits = c(0, 31)
+  ) +
+  facet_wrap(~task) +
+  labs(
+    title = "Hosts",
+    y = "Replicates with task - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "reps_with_task_hosts_plt.pdf", sep = "/"),
+  plot = reps_with_task_hosts_plt
+)
+```
+
+### Symbionts
+
+```{r}
+reps_with_task_sym_plt <- ggplot(
+  data = filter(tasks_completed, partner == "Symbiont"),
+  aes(x = treatment, y = tasks_completed, color = treatment, fill = treatment)
+) +
+  geom_col(
+    alpha = 0.5
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_fill_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  scale_y_continuous(
+    limits = c(0, 31)
+  ) +
+  facet_wrap(~task) +
+  labs(
+    title = "Symbionts",
+    y = "Replicates with task - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "reps_with_task_sym_plt.pdf", sep = "/"),
+  plot = reps_with_task_sym_plt
+)
+```
+
+## Final number of different tasks done
+
+### Hosts
+
+```{r}
+final_num_diff_tasks_hosts_plt <- ggplot(
+  data = filter(tasks_done_final, partner == "Host"),
+  aes(x = treatment, y = tasks_completed, color = treatment)
+) +
+  geom_boxplot(
+    alpha = 0.5,
+    outlier.size = 1
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_y_continuous(
+    limits = c(-0.1, 9.1),
+    breaks = seq(0, 9)
+  ) +
+  labs(
+    title = "Hosts",
+    y = "Number of different tasks completed - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "final_num_diff_tasks_hosts_plt.pdf", sep = "/"),
+  plot = final_num_diff_tasks_hosts_plt
+)
+```
+
+```{r}
+kruskal.test(
+  formula = tasks_completed ~ treatment,
+  data = filter(tasks_done_final, partner == "Host")
+)
+
+wc_results <- pairwise.wilcox.test(
+  x = filter(tasks_done_final, partner == "Host")$tasks_completed,
+  g = filter(tasks_done_final, partner == "Host")$treatment,
+  p.adjust.method	= "holm",
+  exact = FALSE
+)
+```
+
+### Symbionts
+
+```{r}
+final_num_diff_tasks_sym_plt <- ggplot(
+  data = filter(tasks_done_final, partner == "Symbiont"),
+  aes(x = treatment, y = tasks_completed, color = treatment)
+) +
+  geom_boxplot(
+    alpha = 0.5,
+    outlier.size = 1
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_y_continuous(
+    limits = c(-0.1, 9.1),
+    breaks = seq(0, 9)
+  ) +
+  labs(
+    title = "Symbionts",
+    y = "Number of different tasks completed - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "final_num_diff_tasks_sym_plt.pdf", sep = "/"),
+  plot = final_num_diff_tasks_sym_plt
+)
+```
+
+## Total distinct tasks completed over entire run
+
+### Hosts
+
+```{r}
+num_diff_tasks_done_ever_hosts_plt <- ggplot(
+  data = filter(tasks_done_all_time, partner == "Host"),
+  aes(x = treatment, y = tasks_completed_ever, color = treatment)
+) +
+  geom_boxplot(
+    alpha = 0.5,
+    outlier.size = 1
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_y_continuous(
+    limits = c(-0.1, 9.1),
+    breaks = seq(0, 9)
+  ) +
+  labs(
+    title = "Hosts",
+    y = "Number of different tasks completed - Entire run",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "num_diff_tasks_done_ever_hosts_plt.pdf", sep = "/"),
+  plot = num_diff_tasks_done_ever_hosts_plt
+)
+```
+
+### Symbionts
+
+```{r}
+num_diff_tasks_done_ever_sym_plt <- ggplot(
+  data = filter(tasks_done_all_time, partner == "Symbiont"),
+  aes(x = treatment, y = tasks_completed_ever, color = treatment)
+) +
+  geom_boxplot(
+    alpha = 0.5,
+    outlier.size = 1
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_y_continuous(
+    limits = c(-0.1, 9.1),
+    breaks = seq(0, 9)
+  ) +
+  labs(
+    title = "Symbionts",
+    y = "Number of different tasks completed - Entire run",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "num_diff_tasks_done_ever_sym_plt.pdf", sep = "/"),
+  plot = num_diff_tasks_done_ever_sym_plt
+)
+```
+
+## Tasks completed (over entire run)
+
+```{r}
+
+reps_with_task_all_time <- data %>%
+  ungroup() %>%
+  group_by(uid, partner, treatment, rep, task) %>%
+  summarize(
+    n = n(),
+    task_completed_ever = any(task_completed)
+  ) %>%
+  ungroup() %>%
+  group_by(partner, treatment, task) %>%
+  summarize(
+    n = n(),
+    tasks_completed_ever = sum(task_completed_ever == TRUE)
+  )
+```
+
+### Hosts
+
+```{r}
+reps_with_task_all_time_hosts_plt <- ggplot(
+  data = filter(reps_with_task_all_time, partner == "Host"),
+  aes(x = treatment, y = tasks_completed_ever, color = treatment, fill = treatment)
+) +
+  geom_col(
+    alpha = 0.5
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_fill_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  scale_y_continuous(
+    limits = c(0, 31)
+  ) +
+  facet_wrap(~task) +
+  labs(
+    title = "Hosts",
+    y = "Replicates with task - All time",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "reps_with_task_all_time_hosts_plt.pdf", sep = "/"),
+  plot = reps_with_task_all_time_hosts_plt
+)
+```
+
+### Symbionts
+
+```{r}
+reps_with_task_sym_plt <- ggplot(
+  data = filter(tasks_completed, partner == "Symbiont"),
+  aes(x = treatment, y = tasks_completed, color = treatment, fill = treatment)
+) +
+  geom_col(
+    alpha = 0.5
+  ) +
+  scale_color_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_fill_manual(
+    name = "Treatment",
+    values = viridis(4)
+  ) +
+  scale_x_discrete() +
+  scale_y_continuous(
+    limits = c(0, 31)
+  ) +
+  facet_wrap(~task) +
+  labs(
+    title = "Symbionts",
+    y = "Replicates with task - Final Update",
+    x = "Treatment"
+  ) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    )
+  )
+
+ggsave(
+  file = paste(plot_dir, "reps_with_task_sym_plt.pdf", sep = "/"),
+  plot = reps_with_task_sym_plt
+)
+```
+
+### Over time plots
+```{r}
+overtime_plot <- ggplot(data=data, aes(x=update, y=count, group=treatment, colour=treatment)) + ylab("Task count") + xlab("Updates") + stat_summary(aes(color=treatment, fill=treatment),fun.data="mean_cl_boot", geom=c("smooth"), se=TRUE) + theme(panel.background = element_rect(fill='white', colour='black')) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + guides(fill=FALSE) +scale_colour_manual(values=viridis(6)) + scale_fill_manual(values=viridis(6)) + facet_grid(task ~ partner, scales='free')
+
+ggsave(
+  file = paste(plot_dir, "tasks_over_time.pdf", sep="/"),
+  plot = overtime_plot
+)
+```
