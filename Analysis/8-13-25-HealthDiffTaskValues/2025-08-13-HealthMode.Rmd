@@ -601,3 +601,14 @@ ggsave(
   plot = reps_with_task_sym_plt
 )
 ```
+
+### Over time plots
+
+```{r}
+overtime_plot <- ggplot(data=data, aes(x=update, y=count, group=treatment, colour=treatment)) + ylab("Task count") + xlab("Updates") + stat_summary(aes(color=treatment, fill=treatment),fun.data="mean_cl_boot", geom=c("smooth"), se=TRUE) + theme(panel.background = element_rect(fill='white', colour='black')) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + guides(fill=FALSE) +scale_colour_manual(values=viridis(6)) + scale_fill_manual(values=viridis(6)) + facet_grid(task ~ partner, scales='free')
+
+ggsave(
+  file = paste(plot_dir, "tasks_over_time.pdf", sep="/"),
+  plot = overtime_plot
+)
+```
