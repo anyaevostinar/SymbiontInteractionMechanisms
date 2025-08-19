@@ -229,6 +229,64 @@ ggsave(
 )
 ```
 
+Run pairwise fisher's exact tests on each task
+
+```{r}
+tasks <- c("NOT", "NAND", "AND", "ORN", "OR", "ANDN", "NOR", "XOR", "EQU")
+host_task_counts <- tasks_completed %>%
+  ungroup() %>%
+  filter(partner == "Host") %>%
+  mutate(
+    no_task_count = total_reps - tasks_completed
+  )
+
+fisher_results <- data.frame(
+  task = character(),
+  group1 = character(),
+  group2 = character(),
+  n = integer(),
+  p = double(),
+  p.adj = double(),
+  p.adj.signif = character()
+)
+for (t in tasks) {
+  ft_results <- host_task_counts %>%
+    filter(task == t) %>%
+    select(treatment, tasks_completed, no_task_count) %>%
+    column_to_rownames(var = "treatment") %>%
+    pairwise_fisher_test(p.adjust.method = "holm") %>%
+    add_significance("p.adj")
+
+  ft_results <- ft_results %>%
+    mutate(
+      task = rep(t, nrow(ft_results)),
+      .keep = "all"
+    ) %>%
+    relocate(task)
+
+  fisher_results <- rbind(
+    fisher_results,
+    ft_results
+  )
+}
+# fisher_results
+fisher_results <- as_tibble(fisher_results)
+fisher_results <- fisher_results %>%
+  mutate(
+    task = as.factor(task),
+    group1 = as.factor(group1),
+    group2 = as.factor(group2)
+  ) %>%
+  group_by(
+    task
+  )
+fisher_table <- kbl(fisher_results) %>% kable_styling()
+save_kable(
+  fisher_table,
+  paste(plot_dir, "reps_with_task_hosts_stats.pdf", sep = "/")
+)
+```
+
 ### Symbionts
 
 ```{r}
