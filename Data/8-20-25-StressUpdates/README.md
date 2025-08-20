@@ -1,0 +1,1 @@
+Added functionality where symbionts can escape during a stress death event and trying running mutualists with full protection.
