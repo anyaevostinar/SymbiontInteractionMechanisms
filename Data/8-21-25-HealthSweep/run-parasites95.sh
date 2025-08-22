@@ -39,4 +39,4 @@ cp /Accounts/vostinar/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_s
 args=" -START_MOI 1 -FILE_NAME _Parasites85 -SYMBIONT_TYPE 1 -CPU_TRANSFER_CHANCE 0.95 -VERTICAL_TRANSMISSION 0.0 "
 ./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
 
-## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-parasites.sh
+## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-parasites95.sh

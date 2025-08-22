@@ -8,8 +8,8 @@
 #SBATCH --mail-user=vostinar@carleton.edu
 
 ## Job name settings
-#SBATCH --job-name=hp85
-#SBATCH -o hp85%A_%a.out
+#SBATCH --job-name=hp9
+#SBATCH -o hp9%A_%a.out
 
 ## Time requirement in hours and minutes. You might need to make this
 ## longer, but try to keep it under 4 hours if possible
@@ -26,8 +26,8 @@
 
 cd /Accounts/vostinar/SymbiontInteractionMechanisms/Data/8-21-25-HealthSweep
 
-mkdir Parasites85
-cd Parasites85
+mkdir Parasites9
+cd Parasites9
 
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
@@ -39,4 +39,4 @@ cp /Accounts/vostinar/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_s
 args=" -START_MOI 1 -FILE_NAME _Parasites85 -SYMBIONT_TYPE 1 -CPU_TRANSFER_CHANCE 0.85 -VERTICAL_TRANSMISSION 0.0 "
 ./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
 
-## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-parasites.sh
+## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-parasites9.sh
