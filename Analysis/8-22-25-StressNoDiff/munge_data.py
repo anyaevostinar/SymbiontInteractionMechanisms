@@ -4,7 +4,7 @@ import gzip
 metafolder = '../../Data/8-22-25-StressNoDiff/'
 
 
-folders = ["Mutualists", "NoSyms", "Parasites"]
+folders = ["Parasites"]
 partners = ["Host", "Sym"]
 tasks = ["NOT", "NAND", "AND", "ORN", "OR", "ANDN", "NOR", "XOR", "EQU"]
 reps = range(100,131)
