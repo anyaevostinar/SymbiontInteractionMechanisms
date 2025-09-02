@@ -1,0 +1,1 @@
+Running stress mode with same task values (no differentiation) but a sweep of shorter interval periods to see if that causes a stronger effect of the symbionts.
