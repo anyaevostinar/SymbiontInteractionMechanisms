@@ -4,7 +4,7 @@ import gzip
 metafolder = '../../Data/9-02-25-StressIntervalSweep/'
 
 
-folders = ["Parasites"]
+folders = ["Mutualists1k", "Mutualists750", "NoSyms1k", "NoSyms750", "Parasites1k", "Parasites750"]
 partners = ["Host", "Sym"]
 tasks = ["NOT", "NAND", "AND", "ORN", "OR", "ANDN", "NOR", "XOR", "EQU"]
 reps = range(100,130)
