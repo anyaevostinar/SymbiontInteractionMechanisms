@@ -1,0 +1,1 @@
+Running stress mode without differential task values but with the additional of allowing parasites to "jump ship" during an extinction event
