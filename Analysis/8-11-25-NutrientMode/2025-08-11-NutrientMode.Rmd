@@ -492,3 +492,108 @@ ggsave(
   plot = num_diff_tasks_done_ever_sym_plt
 )
 ```
+
+## Host task presence distributions
+
+```{r}
+# Build a lookup table for which runs have no symbiont tasks
+syms_dead <- final_data %>%
+  filter(partner == "Symbiont") %>%
+  group_by(uid, rep, treatment) %>%
+  summarize(
+    total_tasks = sum(count)
+  ) %>%
+  group_by(uid, rep, treatment) %>%
+  summarize(
+    any_syms = total_tasks > 0
+  ) %>%
+  ungroup() %>%
+  select(uid, any_syms)
+
+# Pivot data wider (collapse partner rows into single row)
+partner_match_final_data <- final_data %>%
+  select(!c(task_completed, update)) %>%
+  pivot_wider(
+    names_from = partner,
+    values_from = count
+  ) %>%
+  mutate(
+    host_completed = Host >= task_completion_thresh,
+    sym_completed = Symbiont >= task_completion_thresh
+  ) %>%
+  mutate(
+    host_partner_match = host_completed & sym_completed
+  )
+# Add column indicating whether replicate has any symbionts by
+# joining syms_dead lookup table with wider dataframe.
+partner_match_final_data <- inner_join(
+  x = syms_dead,
+  y = partner_match_final_data,
+  by = join_by(uid)
+)
+
+# Add factor column that indicates:
+# - host_performs_mismatch_syms,
+# - host_performs_match_syms,
+# - host_performs_no_syms
+# - no_host
+
+partner_match_final_data <- partner_match_final_data %>%
+  mutate(
+    host_task_presence = case_when(
+      host_completed & !any_syms ~ "no_syms",
+      host_completed & sym_completed ~ "syms_match",
+      host_completed & !sym_completed ~ "syms_mismatch",
+      !host_completed ~ "none",
+      .default = "unknown"
+    )
+  ) %>%
+  mutate(
+    host_task_presence = as.factor(host_task_presence)
+  )
+# Summarize counts of host_task_presence
+host_task_presence_counts <- partner_match_final_data %>%
+  group_by(treatment, task) %>%
+  summarize(
+    no_hosts = sum(host_task_presence == "none"),
+    host_no_syms = sum(host_task_presence == "no_syms"),
+    host_syms_match = sum(host_task_presence == "syms_match"),
+    host_syms_mismatch = sum(host_task_presence == "syms_mismatch"),
+    n = n()
+  )
+
+host_task_presence_counts_plt <- host_task_presence_counts %>%
+  pivot_longer(
+    !c(treatment, task),
+    names_to = "host_task_presence",
+    values_to = "count"
+  ) %>%
+  filter(
+    host_task_presence %in% c(
+      "host_no_syms",
+      "host_syms_match",
+      "host_syms_mismatch"
+      # "no_hosts"
+    )
+  ) %>%
+  ggplot(
+    aes(
+      x = treatment,
+      y = count,
+      fill = host_task_presence,
+      color = host_task_presence
+    )
+  ) +
+  geom_col() +
+  facet_wrap(~task) +
+  scale_fill_bright() +
+  scale_color_bright() +
+  labs(title = "Nutrient - Host")
+
+ggsave(
+  file = paste(plot_dir, "host_task_presence_counts_plt.pdf", sep = "/"),
+  plot = host_task_presence_counts_plt,
+  width = 10,
+  height = 10
+)
+```
