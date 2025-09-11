@@ -1,0 +1,1 @@
+The experiment tested different PARASITE_DEATH_CHANCES, (0.4, 0.5, 0.55, and 0.6). This experiment only tested with parasites.
