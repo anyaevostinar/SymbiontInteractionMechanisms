@@ -1,0 +1,1 @@
+The experiment changes the EXTINCTION_FREQUENCY to be 250 or 500 updates.
