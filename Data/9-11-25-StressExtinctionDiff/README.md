@@ -1,0 +1,1 @@
+This experiment tested how parasites would fair to different extinction frequencies. Safe time is 10 (as a constant for the other 9-11 experiment), and each test increases the extinction frequency by 10.
