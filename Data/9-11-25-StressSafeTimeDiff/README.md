@@ -1,0 +1,1 @@
+This experiments focuses on seeing how safe time can affect parasites organism count and tasks. The extinction frequency is kept at 10 for a constant, while the safe time increases throughout the tests.
