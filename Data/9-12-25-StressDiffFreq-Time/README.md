@@ -1,0 +1,1 @@
+This experiment tested a few combinations between safe and extinction frequency to see how it would affect the parasites.
