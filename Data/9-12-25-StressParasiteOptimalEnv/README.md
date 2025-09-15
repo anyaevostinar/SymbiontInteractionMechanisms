@@ -1,0 +1,1 @@
+Testing different times of combinations between safe time and extinction frequency, too see if parasites can evolve to perform more complex tasks (settings based on testings from folders 9-11).
