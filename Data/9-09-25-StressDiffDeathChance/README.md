@@ -1,0 +1,1 @@
+Changing the PARASITE_DEATH_CHANCE to 0.4, 0.5, 0.55, 0.6
