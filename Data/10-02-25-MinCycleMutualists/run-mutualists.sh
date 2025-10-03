@@ -5,7 +5,7 @@
 
 ## Email settings
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=vostinar@carleton.edu
+#SBATCH --mail-user=tuckerd@carleton.edu
 
 ## Job name settings
 #SBATCH --job-name=str-para
@@ -25,16 +25,16 @@
 
 cd /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-02-25-MinCycleMutualists
 
-mkdir Mutualists
-cd Mutualists
+mkdir Parasites
+cd Parasites
 
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/zhange2/SymbiontInteractionMechanisms/Data/0-02-25-MinCycleMutualists/SymSettings.cfg .
+cp /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-02-25-MinCycleMutualists/SymSettings.cfg .
 cp /Accounts/zhange2/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
 
-args=" -START_MOI 1 -FILE_NAME _Mutualists -SYMBIONT_TYPE 0 -VERTICAL_TRANSMISSION 1.0 "
+args=" -START_MOI 1 -FILE_NAME _Parasites -SYMBIONT_TYPE 0 -VERTICAL_TRANSMISSION 1.0 "
 ./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
 
-## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-mutalists.sh
+## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-parasites.sh
