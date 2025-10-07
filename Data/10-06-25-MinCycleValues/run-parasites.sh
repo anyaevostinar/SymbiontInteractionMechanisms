@@ -23,7 +23,7 @@
 
 #SBATCH --nodes=1
 
-cd /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-02-25-MinCycleParasites
+cd /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-02-25-MinCycleParasites
 
 mkdir Parasites
 cd Parasites
@@ -31,8 +31,8 @@ cd Parasites
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-02-25-MinCycleParasites/SymSettings.cfg .
-cp /Accounts/tuckerd/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
+cp /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-02-25-MinCycleParasites/SymSettings.cfg .
+cp /Accounts/zhange2/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
 
 args=" -START_MOI 1 -FILE_NAME _Parasites -SYMBIONT_TYPE 1 -VERTICAL_TRANSMISSION 0.0 "
 ./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
