@@ -23,7 +23,7 @@
 
 #SBATCH --nodes=1
 
-cd /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-06-25-MinCycleValues
+cd /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-06-25-MinCycle-100-100
 
 mkdir Parasites
 cd Parasites
@@ -31,7 +31,7 @@ cd Parasites
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-06-25-MinCycleValues/SymSettings.cfg .
+cp /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-06-25-MinCycle-100-100/SymSettings.cfg .
 cp /Accounts/zhange2/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
 
 args=" -START_MOI 1 -FILE_NAME _Parasites -SYMBIONT_TYPE 1 -VERTICAL_TRANSMISSION 0.0 "
