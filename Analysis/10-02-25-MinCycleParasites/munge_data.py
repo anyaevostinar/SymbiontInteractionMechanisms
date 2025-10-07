@@ -1,7 +1,7 @@
 import os.path
 import gzip
 
-metafolder = '../../Data/10-02-MinCycleParasites/'
+metafolder = '../../Data/10-02-25-MinCycleParasites/'
 
 
 folders = ["Parasites"]
