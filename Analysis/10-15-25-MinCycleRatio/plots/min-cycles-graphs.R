@@ -9,12 +9,14 @@ library(paletteer)
 
 
 # =================== load & preprocess data ===================
-ratios <- c("150-25", "150-35", "100-25", "80-25", "60-25", "150-75",
-            "100-50", "80-40", "60-30", "50-25", "150-100", "60-40",
-            "80-60", "100-100", "50-50")
+ratios <- c("100-10","80-10","70-10","100-15", "150-25","60-10","50-10", 
+            "150-35", "100-25", "80-25", "60-25", "150-75", "100-50", 
+            "80-40", "60-30", "50-25", "150-100", "60-40", "80-60", 
+            "100-100", "50-50")
 sums <- c("150-100", "150-75", "100-100", "150-35", "150-25", "100-50",
-          "80-60", "100-25", "80-40", "80-25", "50-50", "60-40",
-          "60-30", "60-25", "50-25")
+          "80-60", "100-25", "80-40","100-15","100-10", "80-25", "50-50", 
+          "60-40","80-10", "60-30", "60-25","70-10", "50-25", 
+          "60-10", "50-10")
 threshold <- 500
 
 prelim_1 <- read.table("data/50-25.dat", h=T) |>
@@ -31,9 +33,11 @@ prelim_6 <- read.table("data/150s.dat", h=T) |>
   mutate(treatment = sub("^Parasites-", "", treatment))
 prelim_7 <- read.table("data/below-80s.dat", h=T) |>
   mutate(treatment = sub("^Parasites-", "", treatment))
+prelim_8 <- read.table("data/ratio.dat", h=T) |>
+  mutate(treatment = sub("^Parasites-", "", treatment))
 
-full_data <- bind_rows(prelim_1, prelim_2, prelim_3, 
-                       prelim_4, prelim_5, prelim_6, prelim_7) |>
+full_data <- bind_rows(prelim_1, prelim_2, prelim_3, prelim_4,
+                       prelim_5, prelim_6, prelim_7, prelim_8) |>
   filter(partner != "Symbiont") |>   # remove Symbiont rows
   select(-uid, -partner) |> # remove uid and partner columns
   mutate( # order tasks by difficulty
@@ -60,7 +64,7 @@ plot1_data <- final_update_only |>
 ggplot(plot1_data, aes(x = treatment, y = num_reps, fill = treatment)) +
   geom_col() +
   facet_wrap(~ task) +
-  scale_fill_manual(values = paletteer::paletteer_d("ggthemes::Hue_Circle")) +
+  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
   labs(
     x = "Treatment",
     y = "Number of Reps",
@@ -86,7 +90,7 @@ plot2_data <- final_update_only |>
 ggplot(plot2_data, aes(x = treatment, y = num_reps, fill = treatment)) +
   geom_col() +
   facet_wrap(~ task) +
-  scale_fill_manual(values = paletteer::paletteer_d("ggthemes::Hue_Circle")) +
+  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
   labs(
     x = "Treatment",
     y = "Number of Reps",
@@ -110,7 +114,7 @@ plot1_data_all <- full_data |>
 ggplot(plot1_data_all, aes(x = treatment, y = num_reps, fill = treatment)) +
   geom_col() +
   facet_wrap(~ task) +
-  scale_fill_manual(values = paletteer::paletteer_d("ggthemes::Hue_Circle")) +
+  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
   labs(
     x = "Treatment",
     y = "Number of Reps",
@@ -131,7 +135,7 @@ plot2_data_all <- full_data |>
 ggplot(plot2_data_all, aes(x = treatment, y = num_reps, fill = treatment)) +
   geom_col() +
   facet_wrap(~ task) +
-  scale_fill_manual(values = paletteer::paletteer_d("ggthemes::Hue_Circle")) +
+  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
   labs(
     x = "Treatment",
     y = "Number of Reps",
@@ -160,7 +164,7 @@ plot3_data <- full_data |>
 # bar graph
 ggplot(plot3_data, aes(x = treatment, y = avg_tasks_done, fill = treatment)) +
   geom_col() +
-  scale_fill_manual(values = paletteer::paletteer_d("ggthemes::Hue_Circle")) +
+  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
   labs(
     x = "Treatment",
     y = "Average # of Different Tasks Done",
@@ -170,6 +174,6 @@ ggplot(plot3_data, aes(x = treatment, y = avg_tasks_done, fill = treatment)) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom"
+    legend.position = "none"
   )
 
