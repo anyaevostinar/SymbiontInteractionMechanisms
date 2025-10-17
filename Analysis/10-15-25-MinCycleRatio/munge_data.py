@@ -1,7 +1,7 @@
 import os.path
 import gzip
 
-metafolder = '../../Data/10-15-25-MinCyclesRatio/'
+metafolder = '../../Data/10-15-25-MinCycleRatio/'
 
 
 folders = ["Parasites-50-10", "Parasites-60-10", "Parasites-80-10", "Parasites-100-10", "Parasites-100-15"]
