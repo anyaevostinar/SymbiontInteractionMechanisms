@@ -23,11 +23,11 @@ for t in folders:
         for line in curFile:
             if (line[0] != "u"):
                 splitline = line.strip().split(',')
-                for task_i in range(1, len(splitline), 2):
-                    task = tasks[(task_i-1)//2]
-                    host_outstring = "{} {} {} {} {} {} {}\n".format(uid, t, r, splitline[0], task, splitline[task_i], "Host")
-                    outFile.write(host_outstring)
-                    sym_outstring = "{} {} {} {} {} {} {}\n".format(uid, t, r, splitline[0], task, splitline[task_i+1], "Symbiont")
-                    outFile.write(sym_outstring)
+                update = splitline[0]
+                sym_steal_ran = splitline[1] 
+                sym_donate_ran = splitline[2]
+                outstring = "{} {} {} {} {} {}\n".format(uid, t, r, update, sym_steal_ran, sym_donate_ran)
+                outFile.write(outstring)
+        curFile.close()
         curFile.close()
 outFile.close()
