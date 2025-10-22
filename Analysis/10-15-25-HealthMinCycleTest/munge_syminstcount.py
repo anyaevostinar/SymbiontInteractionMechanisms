@@ -6,11 +6,11 @@ metafolder = '../../Data/10-15-25-HealthMinCycleTest/'
 
 folders = ["Parasites-80-25", "Parasites-100-25", "Parasites-150-25"]
 reps = range(100,131)
-header = "update sym_steal_ran sym_donate_ran"
+header = "uid treatment rep update sym_steal_ran sym_donate_ran"
 
 outputFileName = "munged_syminstcount.dat"
 outFile = open(outputFileName, 'w')
-outFile.write(header)
+outFile.write(header+"\n")
 
 for t in folders:
     for r in reps:
