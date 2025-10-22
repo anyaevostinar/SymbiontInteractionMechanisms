@@ -24,6 +24,7 @@ for t in folders:
                 update = splitline[0]
                 sym_steal_ran = splitline[1] 
                 sym_donate_ran = splitline[2]
-                outFile.write(line)
+                outstring = "{} {} {} {} {} {}\n".format(uid, t, r, update, sym_steal_ran, sym_donate_ran)
+                outFile.write(outstring)
         curFile.close()
 outFile.close()
