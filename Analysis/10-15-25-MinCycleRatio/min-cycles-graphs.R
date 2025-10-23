@@ -46,37 +46,21 @@ full_data <- bind_rows(prelim_1, prelim_2, prelim_3, prelim_4,
     rep = as.factor(rep)
   )
 
+sym_data <- bind_rows(prelim_1, prelim_2, prelim_3, prelim_4,
+                       prelim_5, prelim_6, prelim_7, prelim_8) |>
+  filter(partner != "Host") |>   # remove Host rows
+  select(-uid) |> # remove uid column
+  mutate( # order tasks by difficulty
+    task = factor(task, levels = c("NOT", "NAND", "ORN", "AND", "OR", 
+                                   "ANDN", "NOR", "XOR", "EQU")))
+
+final_update_syms <- sym_data |>
+  filter(update == 500000)
+
 final_update_only <- full_data |>
   filter(update == 500000)
   
-
-# =================== plot 1: by sums ===================
-
-# create flag for whether the rep did the task
-plot1_data <- final_update_only |>
-  mutate(
-    did_task = count >= threshold,
-    treatment = factor(treatment, levels = sums)) |>
-  group_by(task, treatment) |>
-  summarise(num_reps = sum(did_task), .groups = "drop")
-
-# bar graph
-ggplot(plot1_data, aes(x = treatment, y = num_reps, fill = treatment)) +
-  geom_col() +
-  facet_wrap(~ task) +
-  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
-  labs(
-    x = "Treatment",
-    y = "Number of Reps",
-    title = "Number of reps that completed each task by treatment\n
-    (final update only, treatments ordered by decreasing sum)"
-  ) +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom"
-  )
-
-# =================== plot 2: by ratios ===================
+# =================== plot 1 - hosts ===================
 
 # create flag for whether the rep did the task
 plot2_data <- final_update_only |>
@@ -94,60 +78,15 @@ ggplot(plot2_data, aes(x = treatment, y = num_reps, fill = treatment)) +
   labs(
     x = "Treatment",
     y = "Number of Reps",
-    title = "Number of reps that completed each task by treatment",
-    subtitle ="(final update only, treatments ordered by increasing ratio)"
+    title = "Host reps that completed each task by treatment",
+    subtitle ="(final update only, treatments ordered by ratio)"
   ) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
     legend.position = "bottom"
   )
 
-# =================== identical version using ALL updates ===================
-
-plot1_data_all <- full_data |>
-  mutate(
-    did_task = count >= threshold,
-    treatment = factor(treatment, levels = sums)) |>
-  group_by(task, treatment) |>
-  summarise(num_reps = sum(did_task), .groups = "drop")
-
-ggplot(plot1_data_all, aes(x = treatment, y = num_reps, fill = treatment)) +
-  geom_col() +
-  facet_wrap(~ task) +
-  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
-  labs(
-    x = "Treatment",
-    y = "Number of Reps",
-    title = "Number of reps that completed each task by treatment\n(all updates included, ordered by decreasing sum)"
-  ) +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom"
-  )
-
-plot2_data_all <- full_data |>
-  mutate(
-    did_task = count >= threshold,
-    treatment = factor(treatment, levels = ratios)) |>
-  group_by(task, treatment) |>
-  summarise(num_reps = sum(did_task), .groups = "drop")
-
-ggplot(plot2_data_all, aes(x = treatment, y = num_reps, fill = treatment)) +
-  geom_col() +
-  facet_wrap(~ task) +
-  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
-  labs(
-    x = "Treatment",
-    y = "Number of Reps",
-    title = "Number of reps that completed each task by treatment",
-    subtitle ="(all updates included, ordered by increasing ratio)"
-  ) +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom"
-  )  
-
-# =================== plot 3: avg number of different tasks done (all updates) ===================
+# =================== plot 2: avg host tasks (all updates) ===================
 
 plot3_data <- full_data |>
   mutate(
@@ -161,19 +100,77 @@ plot3_data <- full_data |>
   group_by(treatment) |>
   summarise(avg_tasks_done = mean(num_tasks_done), .groups = "drop") 
 
-# bar graph
-ggplot(plot3_data, aes(x = treatment, y = avg_tasks_done, fill = treatment)) +
+ggplot(plot3_data, aes(x = reorder(treatment, -avg_tasks_done),
+                       y = avg_tasks_done,
+                       fill = reorder(treatment, -avg_tasks_done))) +
   geom_col() +
-  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
+  scale_fill_viridis_d(option = "turbo", end = 0.9) +
   labs(
-    x = "Treatment",
+    x = "Treatment (ordered by average tasks done)",
     y = "Average # of Different Tasks Done",
-    title = "Average number of different tasks done by treatment",
-    subtitle = "(all updates included, ordered by increasing ratio)"
+    title = "Average number of tasks done by treatment (Hosts only)",
+    subtitle = "(all updates included)"
   ) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
     legend.position = "none"
   )
+
+# =================== plot 3 - sym data ===================
+
+plot2_data <- final_update_syms |>
+  mutate(
+    did_task = count >= threshold,
+    treatment = factor(treatment, levels = ratios)) |>
+  group_by(task, treatment) |>
+  summarise(num_reps = sum(did_task), .groups = "drop")
+
+# bar graph
+ggplot(plot2_data, aes(x = treatment, y = num_reps, fill = treatment)) +
+  geom_col() +
+  facet_wrap(~ task) +
+  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
+  labs(
+    x = "Treatment",
+    y = "Number of Reps",
+    title = "Sym reps that completed each task by treatment",
+    subtitle ="(final update only, treatments ordered by ratio)"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "bottom"
+  )
+
+# =================== plot 4: avg sym tasks (all updates) ===================
+
+plot3_data <- sym_data |>
+  mutate(
+    did_task = count >= threshold,
+    treatment = factor(treatment, levels = ratios)
+  ) |>
+  group_by(treatment, rep, task) |>
+  summarise(did_task = any(did_task), .groups = "drop") |> 
+  group_by(treatment, rep) |>
+  summarise(num_tasks_done = sum(did_task), .groups = "drop") |> 
+  group_by(treatment) |>
+  summarise(avg_tasks_done = mean(num_tasks_done), .groups = "drop") 
+
+ggplot(plot3_data, aes(x = reorder(treatment, -avg_tasks_done),
+                       y = avg_tasks_done,
+                       fill = reorder(treatment, -avg_tasks_done))) +
+  geom_col() +
+  scale_fill_viridis_d(option = "turbo", end = 0.9) +
+  labs(
+    x = "Treatment (ordered by average tasks done)",
+    y = "Average # of Different Tasks Done",
+    title = "Average number of tasks done by treatment (Syms only)",
+    subtitle = "(all updates included)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  )
+
 
