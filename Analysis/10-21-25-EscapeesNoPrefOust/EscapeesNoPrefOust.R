@@ -20,7 +20,7 @@ clean_data <- raw_data |>
 
 
 final_update_only <- clean_data |>
-  filter(update == 100000)
+  filter(update == 500000)
 
 # =================== plot 1 ===================
 
