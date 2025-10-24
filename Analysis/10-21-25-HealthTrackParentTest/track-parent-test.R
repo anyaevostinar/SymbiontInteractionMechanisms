@@ -4,6 +4,7 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(paletteer)
+library(viridis)
 
 
 # =================== load & preprocess data ===================
@@ -60,41 +61,30 @@ ggplot(plot2_data, aes(x = treatment, y = num_reps, fill = partner)) +
 
 # =================== plot 2: steal instructions over time ===================
 
-# summarise mean & CI for each treatment
-steal_summary <- steal_data |>
-  group_by(treatment, update) |>
-  summarise(
-    avg_steal = mean(sym_steal_ran, na.rm = TRUE),
-    sd_steal  = sd(sym_steal_ran, na.rm = TRUE),
-    n = n(),
-    se_steal  = sd_steal / sqrt(n),
-    ci_low  = avg_steal - 1.96 * se_steal,
-    ci_high = avg_steal + 1.96 * se_steal,
-    .groups = "drop"
-  )
-
-ggplot(steal_summary, aes(x = update, y = avg_steal, color = treatment, fill = treatment)) +
-  geom_ribbon(aes(ymin = ci_low, ymax = ci_high), alpha = 0.2, color = NA) +
-  geom_line(size = 1) +
-  labs(
-    x = "Update (×1000)",
-    y = "Average Steal Count (×1000)",
-    color = "Treatment",
-    fill = "Treatment",
-    title = "Average symbiont steal instruction count over time",
-    subtitle = "(Mean ± 95% CI, averaged over all reps per treatment)"
-  ) +
+ggplot(data = steal_data, aes(x = update, y = sym_steal_ran, group = treatment, colour = treatment)) + 
+  ylab("Average Steal Count (×1000)") + 
+  xlab("Update (×1000)") +
+  stat_summary(
+    aes(color = treatment, fill = treatment),
+    fun.data = "mean_cl_boot",
+    geom = "smooth",
+    se = TRUE) +
+  theme(
+    panel.background = element_rect(fill = 'white', colour = 'black'),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom") +
+  guides(fill = FALSE) +
+  scale_colour_manual(name = "Treatment", values = viridis(3)) +
+  scale_fill_manual(values = viridis(3)) +
   scale_x_continuous(
     breaks = seq(0, 100000, by = 5000), 
-    labels = function(x) x / 1000
-  ) +
+    labels = function(x) x / 1000) +
   scale_y_continuous(
-    breaks = seq(0, max(steal_summary$avg_steal), by = 20000), 
-    labels = function(y) y / 1000
-  ) +
-  theme(
-    legend.position = "bottom"
-  )
+    labels = function(y) y / 1000) +
+  labs(
+    title = "Average symbiont steal instruction count over time",
+    subtitle = "(Mean ± 95% CI, averaged over all reps per treatment)")
 
 
 
