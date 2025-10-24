@@ -23,14 +23,14 @@
 
 #SBATCH --nodes=1
 
-cd /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-21-25-HealthVerticalTrans
+cd /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-22-25-HealthVerticalTrans
 mkdir Parasites-0.7
 cd Parasites-0.7
 
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-21-25-HealthVerticalTrans/SymSettings.cfg .
+cp /Accounts/zhange2/SymbiontInteractionMechanisms/Data/10-22-25-HealthVerticalTrans/SymSettings.cfg .
 cp /Accounts/zhange2/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
 
 args=" -START_MOI 1 -FILE_NAME _Parasites-0.7 -SYMBIONT_TYPE 1 -VERTICAL_TRANSMISSION 0.7"
