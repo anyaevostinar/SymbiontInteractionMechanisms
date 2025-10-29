@@ -23,17 +23,17 @@
 
 #SBATCH --nodes=1
 
-cd /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-28-25-EscapeesNoPrefOust
-mkdir Parasites-0
-cd Parasites-0
+cd /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-21-25-EscapeesNoPrefOust
+mkdir Parasites-8
+cd Parasites-8
 
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-28-25-EscapeesNoPrefOust/SymSettings.cfg .
+cp /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-21-25-EscapeesNoPrefOust/SymSettings.cfg .
 cp /Accounts/tuckerd/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
 
-args=" -START_MOI 1 -FILE_NAME _Parasites-0 -SYMBIONT_TYPE 1 -VERTICAL_TRANSMISSION 0.0 -PARASITE_NUM_OFFSPRING_ON_STRESS_INTERACTION 0"
+args=" -START_MOI 1 -FILE_NAME _Parasites-8 -SYMBIONT_TYPE 1 -VERTICAL_TRANSMISSION 0.0 -PARASITE_NUM_OFFSPRING_ON_STRESS_INTERACTION 8"
 ./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
 
-## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-parasites-0.sh
+## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-parasites-8.sh
