@@ -23,14 +23,14 @@
 
 #SBATCH --nodes=1
 
-cd /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-21-25-EscapeesNoPrefOust
+cd /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-28-25-EscapeesNoPrefOust
 mkdir Parasites-8
 cd Parasites-8
 
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-21-25-EscapeesNoPrefOust/SymSettings.cfg .
+cp /Accounts/tuckerd/SymbiontInteractionMechanisms/Data/10-28-25-EscapeesNoPrefOust/SymSettings.cfg .
 cp /Accounts/tuckerd/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
 
 args=" -START_MOI 1 -FILE_NAME _Parasites-8 -SYMBIONT_TYPE 1 -VERTICAL_TRANSMISSION 0.0 -PARASITE_NUM_OFFSPRING_ON_STRESS_INTERACTION 8"
