@@ -1,0 +1,183 @@
+
+# =================== load libraries ===================
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(paletteer)
+library(viridis)
+
+
+# =================== load & preprocess data ===================
+
+threshold <- 500
+
+raw_task_data <- read.table("11-11-25-vert-trans-allow-evol/data/VerticalTransNoTransEvol.dat", h=T) |>
+  mutate(treatment = sub("^Parasites-", "", treatment)) # dont worry about the .dat filename we messed up but this is correct
+
+steal_data <- read.table("11-11-25-vert-trans-allow-evol/data/VerticalTransNoTransEvolSymInst.dat", h=T) |>
+  mutate(treatment = sub("^Parasites-", "", treatment))
+
+clean_task_data <- raw_task_data |>
+  select(-uid) |> # remove uid column
+  mutate( # order tasks by difficulty
+    task = factor(task, levels = c("NOT", "NAND", "ORN", "AND", "OR", 
+                                   "ANDN", "NOR", "XOR", "EQU")),
+    partner = as.factor(partner))
+
+
+final_update_only <- clean_task_data |>
+  filter(update == 100000)
+
+# =================== plot 1: steal instructions over time ===================
+
+ggplot(data = steal_data, aes(x = update, y = sym_steal_ran, group = treatment, colour = treatment)) + 
+  ylab("Average Steal Count (×1000)") + 
+  xlab("Update (×1000)") +
+  stat_summary(
+    aes(color = treatment, fill = treatment),
+    fun.data = "mean_cl_boot",
+    geom = "smooth",
+    se = TRUE
+  ) +
+  theme(
+    panel.background = element_rect(fill = 'white', colour = 'black'),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom"
+  ) +
+  guides(fill = "none") +
+  scale_colour_manual(name = "Treatment", values = viridis(11)) + # CHANGE THIS NUMBER TO NUMBER OF TREATMENTS
+  scale_fill_manual(values = viridis(11)) + # THIS TOO
+  scale_x_continuous(
+    breaks = seq(0, 100000, by = 5000), 
+    labels = function(x) x / 1000
+  ) +
+  scale_y_continuous(
+    labels = function(y) y / 1000
+  ) +
+  labs(
+    title = "Average symbiont steal instruction count over time")
+
+# =================== plot 1.5: donate instructions over time ===================
+
+ggplot(data = steal_data, aes(x = update, y = sym_donate_ran, group = treatment, colour = treatment)) + 
+  ylab("Average Donate Count (×1000)") + 
+  xlab("Update (×1000)") +
+  stat_summary(
+    aes(color = treatment, fill = treatment),
+    fun.data = "mean_cl_boot",
+    geom = "smooth",
+    se = TRUE
+  ) +
+  theme(
+    panel.background = element_rect(fill = 'white', colour = 'black'),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom"
+  ) +
+  guides(fill = "none") +
+  scale_colour_manual(name = "Treatment", values = viridis(11)) + # CHANGE THIS NUMBER TO NUMBER OF TREATMENTS
+  scale_fill_manual(values = viridis(11)) + # THIS TOO
+  scale_x_continuous(
+    breaks = seq(0, 100000, by = 5000), 
+    labels = function(x) x / 1000
+  ) +
+  scale_y_continuous(
+    labels = function(y) y / 1000
+  ) +
+  labs(
+    title = "Average symbiont donate instruction count over time")
+
+# =================== plot 2: tasks by partner by treatment ===================
+
+
+plot2_data <- final_update_only |>
+  mutate(
+    did_task = count >= threshold,
+    treatment = factor(treatment)
+  ) |>
+  group_by(task, treatment, partner) |>
+  summarise(num_reps = sum(did_task), .groups = "drop")
+
+# bar graph
+ggplot(plot2_data, aes(x = treatment, y = num_reps, fill = partner)) +
+  geom_col(position = "dodge") +  # side-by-side bars for Host vs Symbiont
+  facet_wrap(~ task) +
+  scale_fill_manual(values = c("Host" = "blue", "Symbiont" = "red")) +
+  labs(
+    x = "VERTICAL_TRANSMISSION value",
+    y = "Number of Reps",
+    fill = "Type",
+    title = "Number of reps that completed each task by treatment and partner"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "bottom"
+  )
+
+# =================== plot 3: avg tasks (all updates) ===================
+
+plot3_data <- clean_task_data |>
+  mutate(
+    did_task = count >= threshold,
+    treatment = factor(treatment)
+  ) |>
+  group_by(treatment, rep, task, partner) |>  
+  summarise(did_task = any(did_task), .groups = "drop") |> 
+  group_by(treatment, rep, partner) |>
+  summarise(num_tasks_done = sum(did_task), .groups = "drop") |> 
+  group_by(treatment, partner) |>
+  summarise(avg_tasks_done = mean(num_tasks_done), .groups = "drop")
+
+# side-by-side bar graph
+ggplot(plot3_data, aes(x = treatment, y = avg_tasks_done, fill = partner)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  scale_fill_viridis_d(option = "turbo", end = 0.9) + 
+  labs(
+    x = "Treatment",
+    y = "Average # of Different Tasks Done",
+    fill = "Type",
+    title = "Average number of different tasks done by treatment"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+# =================== plot 4: avg donate & steal over time by treatment ===================
+
+steal_long <- steal_data |>
+  select(update, treatment, sym_steal_ran, sym_donate_ran) |>
+  pivot_longer(cols = c(sym_steal_ran, sym_donate_ran),
+               names_to = "instruction_type",
+               values_to = "count") |>
+  mutate(
+    instruction_type = recode(instruction_type,
+                              sym_steal_ran = "Steal",
+                              sym_donate_ran = "Donate"))
+
+ggplot(steal_long, aes(x = update, y = count, color = instruction_type, fill = instruction_type)) +
+  stat_summary(fun.data = "mean_cl_boot", geom = "smooth", se = TRUE) +
+  facet_wrap(~ treatment) +
+  scale_color_viridis_d(option = "plasma", end = 0.9) +
+  scale_fill_viridis_d(option = "plasma", end = 0.9) +
+  scale_x_continuous(
+    breaks = seq(0, 100000, by = 5000),
+    labels = function(x) x / 1000
+  ) +
+  scale_y_continuous(
+    labels = function(y) y / 1000
+  ) +
+  labs(
+    x = "Update (×1000)",
+    y = "Average Instruction Count (×1000)",
+    color = "Instruction Type",
+    fill = "Instruction Type",
+    title = "Average donate and steal instruction counts over time by treatment"
+  ) +
+  theme(
+    panel.background = element_rect(fill = 'white', colour = 'black'),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom"
+  )
