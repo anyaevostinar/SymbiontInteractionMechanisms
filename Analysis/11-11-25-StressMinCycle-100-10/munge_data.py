@@ -4,7 +4,7 @@ import gzip
 metafolder = '../../Data/11-11-25-StressMinCycle-100-10/'
 
 
-folders = ["Parasites-50-10", "Parasites-60-10", "Parasites-80-10", "Parasites-100-10", "Parasites-100-15"]
+folders = ["Parasites-100-10"]
 partners = ["Host", "Sym"]
 tasks = ["NOT", "NAND", "AND", "ORN", "OR", "ANDN", "NOR", "XOR", "EQU"]
 reps = range(100,131)
