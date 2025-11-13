@@ -23,17 +23,17 @@
 
 #SBATCH --nodes=1
 
-cd /Accounts/zhange2/SymbiontInteractionMechanisms/Data/11-11-25-VerticalTransNoTransEvol
-mkdir Parasites-0.0
-cd Parasites-0.0
+cd /Accounts/zhange2/SymbiontInteractionMechanisms/Data/11-11-25-VerticalTransTransEvol
+mkdir Parasites-0.4
+cd Parasites-0.4
 
 mkdir ${SLURM_ARRAY_TASK_ID}
 cd ${SLURM_ARRAY_TASK_ID}
 
-cp /Accounts/zhange2/SymbiontInteractionMechanisms/Data/11-11-25-VerticalTransNoTransEvol/SymSettings.cfg .
+cp /Accounts/zhange2/SymbiontInteractionMechanisms/Data/11-11-25-VerticalTransTransEvol/SymSettings.cfg .
 cp /Accounts/zhange2/SymbiontInteractionMechanisms/SymbulationEmp/symbulation_sgp .
 
-args=" -START_MOI 1 -FILE_NAME _Parasites-0.0 -VERTICAL_TRANSMISSION 0.0"
+args=" -START_MOI 1 -FILE_NAME _Parasites-0.4 -VERTICAL_TRANSMISSION 0.4"
 ./symbulation_sgp $args -SEED ${SLURM_ARRAY_TASK_ID} > run.log
 
-## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-parasites-0.0.sh
+## Run with sbatch -p facultynode --nodelist=edmonstone2024,margulis2024,carver,lederberg run-parasites-0.4.sh
