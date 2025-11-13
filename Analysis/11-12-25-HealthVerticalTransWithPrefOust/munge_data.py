@@ -1,7 +1,7 @@
 import os.path
 import gzip
 
-metafolder = '../../Data/11-11-25-VerticalTransTransEvol/'
+metafolder = '../../Data/11-12-25-HealthVerticalTransWithPrefOust/'
 
 
 folders = ["Parasites-0.0", "Parasites-0.1", "Parasites-0.2", "Parasites-0.3", "Parasites-0.4", "Parasites-0.5", "Parasites-0.6", "Parasites-0.7", "Parasites-0.8", "Parasites-0.9", "Parasites-1.0"]
